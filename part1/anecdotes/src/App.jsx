@@ -20,15 +20,36 @@ const App = () => {
 		setVotes(copyVotes);
 	}
 
+	const findMostVoteIndx = () => {
+		let currMax = 0;
+		let currInd = 0;
+		votes.forEach((num, i) => {
+			if (num >= currMax) {
+				currMax = num;
+				currInd = i;
+			}
+		})
+		return currInd;
+	}
+
 	return (
-		<div>
-			{anecdotes[selected]}
-			<p>{`has ${votes[selected]} votes`}</p>
+		<>
+			<h2>Anecdote of the day</h2>
 			<div>
-				<button onClick={() => voteCallback(selected)}>vote</button>
-				<button onClick={() => setSelected(Math.floor(Math.random()*anecdotes.length))}>next anecdote</button>
+				{anecdotes[selected]}
+				<div>{`has ${votes[selected]} votes`}</div>
+				<div>
+					<button onClick={() => voteCallback(selected)}>vote</button>
+					<button onClick={() => setSelected(Math.floor(Math.random()*anecdotes.length))}>next anecdote</button>
+				</div>
 			</div>
-		</div>
+
+			<h2>Anecdote with most votes</h2>
+			<div className="most-voted-anecdote">
+				{anecdotes[findMostVoteIndx()]}
+				<div>{`has ${votes[findMostVoteIndx()]} votes`}</div>
+			</div>
+		</>
 	)
 }
 
