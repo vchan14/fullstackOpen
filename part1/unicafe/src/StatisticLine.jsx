@@ -1,7 +1,10 @@
 const StatisticLine = ({text, value}) => {
 	const displayedText = `${text} ${value}`;
 	return (
-		<p>{displayedText}</p>
+		<tr>
+			<td>{text}</td>
+			<td>{value}</td>
+		</tr>
 	)
 }
 
