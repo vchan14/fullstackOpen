@@ -12,12 +12,20 @@ const App = () => {
 		'The only way to go fast, is to go well.'
 	]
 
-	const [selected, setSelected] = useState(0)
+	const [selected, setSelected] = useState(0);
+	const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
+	const voteCallback = (index) => {
+		const copyVotes = votes.slice();
+		copyVotes[index] += 1;
+		setVotes(copyVotes);
+	}
 
 	return (
 		<div>
 			{anecdotes[selected]}
+			<p>{`has ${votes[selected]} votes`}</p>
 			<div>
+				<button onClick={() => voteCallback(selected)}>vote</button>
 				<button onClick={() => setSelected(Math.floor(Math.random()*anecdotes.length))}>next anecdote</button>
 			</div>
 		</div>
