@@ -1,3 +1,6 @@
+import Header from "./Header.jsx";
+import Content from "./Content.jsx";
+
 const Course = ({course}) => {
 
 	const {name, parts, id} = course;
@@ -8,16 +11,8 @@ const Course = ({course}) => {
 
 	return (
 		<>
-			<h2 className="header">
-				{name}
-			</h2>
-
-			{parts.map(part =>
-				<p key={part.id}>
-					{`${part.name} ${part.exercises}`}
-				</p>
-			)}
-
+			<Header course={name}/>
+			<Content parts={parts}/>
 			<h4>
 				{`total of ${totalExercises} exercises`}
 			</h4>

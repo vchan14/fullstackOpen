@@ -1,4 +1,4 @@
-import Course from "./Course.jsx";
+import Course from "./components/Course.jsx";
 
 const App = () => {
 	const courses = [
@@ -50,7 +50,6 @@ const App = () => {
 		<>
 			{(courses.map(course => <Course key={course.id} course={course} />))}
 		</>
-
 	);
 }
 
