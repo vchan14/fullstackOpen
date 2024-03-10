@@ -47,8 +47,19 @@ const App = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (persons.some(person => person.name === newName)) {
-			alert(`${name} is already added to phonebook`);
+
+		const oldPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase());
+
+		if (oldPerson) {
+			const confirmedMessage = `${oldPerson.name} is already added to phonebook, replace the old number with a new one?`;
+			if (window.confirm(confirmedMessage)) {
+				personService.update(oldPerson.id, {name:oldPerson.name, number: newNumber})
+					.then(response => {
+						const copy = persons.concat().filter(person => person.id !== oldPerson.id);
+						copy.push(response.data);
+						setPersons(copy)
+					});
+			}
 			return
 		}
 
@@ -74,8 +85,6 @@ const App = () => {
 				const copyPersons = [...persons].filter(person => person.id !== id);
 				setPersons(copyPersons);
 			})
-
-		console.log('my person is ', person);
 	}
 
 	return (
