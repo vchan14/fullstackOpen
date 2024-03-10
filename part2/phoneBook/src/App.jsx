@@ -10,16 +10,15 @@ const App = () => {
 	const [newNumber, setNewNumber] = useState('');
 	const [newSearch, setNewSearch] = useState('');
 
-	// example of axios and effect-hook
-	const hook = () => {
-		console.log('effect')
+	// example of axios and effect-initialPersonsHook
+	const initialPersonsHook = () => {
 		axios
 			.get('http://localhost:3001/persons')
 			.then(response => {
 				setPersons(response.data)
 			})
 	}
-	useEffect(hook, [])
+	useEffect(initialPersonsHook, [])
 
 	const handleNewSearch = (e) => {
 		const newString = e.target.value;
@@ -46,9 +45,20 @@ const App = () => {
 			alert(`${name} is already added to phonebook`);
 			return
 		}
-		setPersons(persons.concat({name:newName, number:newNumber, id:persons.length}));
+
+		const newPerson = {name:newName, number:newNumber};
+
+		axios
+			.post('http://localhost:3001/persons', newPerson)
+			.then(response => {
+				setPersons(persons.concat(response.data));
+			})
+
+		setPersons(persons.concat());
 		setNewName('');
-		setNewNumber('')
+		setNewNumber('');
+
+
 	}
 
 	return (
