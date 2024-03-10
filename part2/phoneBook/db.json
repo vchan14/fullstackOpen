@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": "1"
-    },
-    {
       "name": "Ada Lovelace",
       "number": "39-44-5323523",
       "id": "2"
@@ -26,14 +21,14 @@
       "number": "2222 3333"
     },
     {
-      "id": "588c",
-      "name": "Dara",
-      "number": "0007777"
-    },
-    {
       "id": "5397",
       "name": "Giro",
       "number": "443"
+    },
+    {
+      "id": "430f",
+      "name": "Taylor Swift",
+      "number": "323487788"
     }
   ]
 }

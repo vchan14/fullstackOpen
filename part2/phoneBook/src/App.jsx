@@ -60,8 +60,22 @@ const App = () => {
 		setPersons(persons.concat());
 		setNewName('');
 		setNewNumber('');
+	}
 
+	const onDelete = (id) => {
+		const person = persons.find(person => 	person.id  === id);
+		const confirmedMessage = `Delete ${person.name}`;
+		if(!window.confirm(confirmedMessage)) {
+			return;
+		}
+		personService.deleteRequest(id)
+			.then(response => {
+				const id = response.data.id;
+				const copyPersons = [...persons].filter(person => person.id !== id);
+				setPersons(copyPersons);
+			})
 
+		console.log('my person is ', person);
 	}
 
 	return (
@@ -77,7 +91,9 @@ const App = () => {
 				handleNewNumberChange={handleNewNumberChange}
 			/>
 			<h3>Numbers</h3>
-			<Persons shownPersons={shownNames()} />
+			<Persons shownPersons={shownNames()}
+				onDelete={onDelete}
+			/>
 		</div>
 	)
 }
