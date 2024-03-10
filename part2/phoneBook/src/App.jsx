@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import Filter from "./Filter.jsx";
+import PersonForm from "./PersonForm.jsx";
+import Persons from "./Persons.jsx";
 
 const App = () => {
 	const [persons, setPersons] = useState([
@@ -27,9 +30,7 @@ const App = () => {
 	}
 
 	const shownNames = () => {
-		return (persons
-			.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()))
-			.map(person => <div key={person.name}>{`${person.name} ${person.number}`}</div>));
+		return persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()));
 	}
 
 	const handleSubmit = (e) => {
@@ -38,7 +39,7 @@ const App = () => {
 			alert(`${name} is already added to phonebook`);
 			return
 		}
-		setPersons(persons.concat({name:newName, number:newNumber}));
+		setPersons(persons.concat({name:newName, number:newNumber, id:persons.length}));
 		setNewName('');
 		setNewNumber('')
 	}
@@ -46,42 +47,17 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
-
-			<div>filter shown with
-				<input
-					value={newSearch}
-					onChange={handleNewSearch}
-				/>
-
-			</div>
-
-			<h2>add a new</h2>
-			<form onSubmit={handleSubmit}>
-				<div>
-					<div>
-						name:
-						<input
-							value={newName}
-							onChange={handleNameChange}
-						/>
-					</div>
-					<div>
-						number:
-						<input
-							value={newNumber}
-							onChange={handleNewNumberChange}
-						/>
-
-					</div>
-
-				</div>
-				<div>
-					<button type="submit">add</button>
-				</div>
-			</form>
-			<h2>Numbers</h2>
-			{shownNames()}
-
+			<Filter newSearch={newSearch} handleNewSearch={handleNewSearch} />
+			<h3>add a new</h3>
+			<PersonForm
+				handleSubmit={handleSubmit}
+				newName={newName}
+				handleNameChange={handleNameChange}
+				newNumber={newNumber}
+				handleNewNumberChange={handleNewNumberChange}
+			/>
+			<h3>Numbers</h3>
+			<Persons shownPersons={shownNames()} />
 		</div>
 	)
 }
