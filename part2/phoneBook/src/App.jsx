@@ -1,15 +1,18 @@
 import {useEffect, useState} from 'react'
-import Filter from "./Filter.jsx";
-import PersonForm from "./PersonForm.jsx";
-import Persons from "./Persons.jsx";
+import Filter from "./components/Filter.jsx";
+import PersonForm from "./components/PersonForm.jsx";
+import Persons from "./components/Persons.jsx";
 import axios from "axios";
 import personService from './services/persons.js';
+import Notification from "./components/notification/Notification.jsx";
 
+const delay = 1000 *10
 const App = () => {
 	const [persons, setPersons] = useState([])
 	const [newName, setNewName] = useState('');
 	const [newNumber, setNewNumber] = useState('');
 	const [newSearch, setNewSearch] = useState('');
+	const [messageObj, setMessageObj] = useState({message:'', isError: false});
 
 	// example of axios and effect-initialPersonsHook
 	const initialPersonsHook = () => {
@@ -47,9 +50,7 @@ const App = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-
 		const oldPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase());
-
 		if (oldPerson) {
 			const confirmedMessage = `${oldPerson.name} is already added to phonebook, replace the old number with a new one?`;
 			if (window.confirm(confirmedMessage)) {
@@ -58,16 +59,33 @@ const App = () => {
 						const copy = persons.concat().filter(person => person.id !== oldPerson.id);
 						copy.push(response.data);
 						setPersons(copy)
-					});
+						setMessageObj({message: `Updated ${response.data.name}`, isError: false});
+						setTimeout(()=> {
+							setMessageObj({message: '', isError: false});
+						}, delay);
+					})
+					.catch(e => {
+
+						console.log('you got me');
+						setMessageObj({message:`Failed to update the info of ${oldPerson.name}`, isError: true});
+						setTimeout(()=> {
+							setMessageObj({message: '', isError: false});
+						}, delay);
+					})
 			}
-			return
+			return;
 		}
-
 		const newPerson = {name:newName, number:newNumber};
-
 		personService.create(newPerson)
-			.then(response => setPersons(persons.concat(response.data)));
+			.then(response => {
+				setPersons(persons.concat(response.data));
+				setMessageObj({message: `Added ${response.data.name}`, isError: false});
+				setTimeout(()=> {
+					setMessageObj({message: '', isError: false});
+				}, delay)
 
+				}
+			);
 		setPersons(persons.concat());
 		setNewName('');
 		setNewNumber('');
@@ -90,6 +108,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification messageObj={messageObj}/>
 			<Filter newSearch={newSearch} handleNewSearch={handleNewSearch} />
 			<h3>add a new</h3>
 			<PersonForm
