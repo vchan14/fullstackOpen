@@ -2,6 +2,7 @@ let entries = require("./entries.json");
 
 const express = require('express')
 const app = express()
+app.use(express.json());
 
 app.get('/', (request, response) => {
 	response.send('<h1>Hello World!</h1>')
@@ -37,6 +38,61 @@ app.get('/api/persons/:id', (request, response) => {
 	} else {
 		response.status(404).end()
 	}
+})
+
+// HTTP DELETE
+app.delete('/api/persons/:id', (request, response) => {
+	const id = Number(request.params.id)
+	entries = entries.filter(note => note.id !== id)
+	response.status(204).end()
+})
+
+// POST  http://localhost:3001/api/persons
+
+const getRandomNumAbstract = () =>  {
+	const max_num = 1000000;
+	const cache = new Set([1, 2, 3, 4]);
+	return () => {
+		while(true) {
+			const randNum = Math.floor(Math.random() * max_num);
+			if (!cache.has(randNum)) {
+				cache.add(randNum)
+				return randNum;
+			}
+		}
+	}
+}
+
+const getRandomNum = getRandomNumAbstract();
+
+const hasName = (name) => {
+	return entries.some(entry => entry.name === name);
+}
+
+app.post('/api/persons', (request, response) => {
+	const body = request.body
+	if (!(body.name && body.number)) {
+		return response.status(400).json({
+			error: `Invalid body format. Need to provide both name and number key-pairs. Received: ${JSON.stringify(body)}`
+		})
+	}
+
+	const name = body.name;
+	const number = body.number;
+
+	if (hasName(name)) {
+		return response.status(400).json({
+			error: `Name is already exist. ${name}`
+		})
+	}
+
+	const entry = {
+		name,
+		number,
+		id: getRandomNum(),
+	}
+	entries = entries.concat(entry)
+	response.json(entry)
 })
 
 
