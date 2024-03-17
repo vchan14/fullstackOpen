@@ -1,8 +1,28 @@
 let entries = require("./entries.json");
 
 const express = require('express')
-const app = express()
+const morgan = require('morgan')
+
+const app = express();
 app.use(express.json());
+
+const customMorgan = (function (tokens, req, res) {
+	const output = [
+		tokens.method(req, res),
+		tokens.url(req, res),
+		tokens.status(req, res),
+		tokens.res(req, res, 'content-length'), '-',
+		tokens['response-time'](req, res), 'ms'
+	]
+
+	if (req.method === "POST") {
+		output.push(JSON.stringify(req.body));
+	}
+	return output.join(' ');
+})
+
+app.use(morgan(customMorgan));
+
 
 app.get('/', (request, response) => {
 	response.send('<h1>Hello World!</h1>')
