@@ -87,8 +87,7 @@ const App = () => {
 		}
 		personService.deleteRequest(id)
 			.then(response => {
-				const id = response.data.id;
-				const copyPersons = [...persons].filter(person => person.id !== id);
+				const copyPersons = persons.filter(person => person.id !== id);
 				setPersons(copyPersons);
 			})
 	}
