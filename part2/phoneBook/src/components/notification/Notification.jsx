@@ -1,9 +1,5 @@
 import './style.css'
 const Notification = ({messageObj}) => {
-
-
-	console.log('messageObj ', messageObj);
-
 	const {message, isError} = messageObj;
 	if (message === null || message === '') {
 		return null

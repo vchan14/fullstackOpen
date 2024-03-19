@@ -14,20 +14,9 @@ const App = () => {
 	const [newSearch, setNewSearch] = useState('');
 	const [messageObj, setMessageObj] = useState({message:'', isError: false});
 
-	// example of axios and effect-initialPersonsHook
-	const initialPersonsHook = () => {
-		axios
-			.get('http://localhost:3001/persons')
-			.then(response => {
-				setPersons(response.data)
-			})
-	}
-
-	const hook = () => {
-		personService.getAll()
-			.then(response => setPersons(response.data))
-	}
-	useEffect(initialPersonsHook, [])
+	useEffect(() => {
+		personService.getAll().then(response => setPersons(response.data))
+	}, [])
 
 	const handleNewSearch = (e) => {
 		const newString = e.target.value;
@@ -66,7 +55,6 @@ const App = () => {
 					})
 					.catch(e => {
 
-						console.log('you got me');
 						setMessageObj({message:`Failed to update the info of ${oldPerson.name}`, isError: true});
 						setTimeout(()=> {
 							setMessageObj({message: '', isError: false});
