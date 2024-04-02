@@ -43,7 +43,7 @@ const App = () => {
 		if (oldPerson) {
 			const confirmedMessage = `${oldPerson.name} is already added to phonebook, replace the old number with a new one?`;
 			if (window.confirm(confirmedMessage)) {
-				personService.update(oldPerson.id, {name:oldPerson.name, number: newNumber})
+				personService.update(oldPerson.id, {name:oldPerson.name, phoneNumber: newNumber})
 					.then(response => {
 						const copy = persons.concat().filter(person => person.id !== oldPerson.id);
 						copy.push(response.data);
@@ -63,7 +63,7 @@ const App = () => {
 			}
 			return;
 		}
-		const newPerson = {name:newName, number:newNumber};
+		const newPerson = {name:newName, phoneNumber:newNumber};
 		personService.create(newPerson)
 			.then(response => {
 				setPersons(persons.concat(response.data));
