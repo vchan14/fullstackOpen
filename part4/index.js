@@ -3,16 +3,9 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const {PORT, MONGODB_URI} = require("./utils/config");
+const {info} = require("./utils/logger");
 
-const blogSchema = new mongoose.Schema({
-    title: String,
-    author: String,
-    url: String,
-    likes: Number
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
-
+const Blog = require('./models/blog');
 mongoose.connect(MONGODB_URI)
 
 app.use(cors())
@@ -38,5 +31,5 @@ app.post('/api/blogs', (request, response) => {
 
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+    info(`Server running on port ${PORT}`)
 })
