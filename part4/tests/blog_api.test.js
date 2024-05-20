@@ -50,6 +50,13 @@ describe('when there is initially some initialBlogs saved', () => {
         assert(contents.includes('React patterns'))
     })
 
+    test('blog contain id property and not _id', async () => {
+        const response = await api.get('/api/blogs');
+        const firstBlog = response.body[0];
+        assert.strictEqual(firstBlog.hasOwnProperty('id'), true);
+        assert.strictEqual(firstBlog.hasOwnProperty('_id'), false);
+    })
+
     test('a valid blog can be added', async () => {
         const newBlog = {
             title: 'Type wars',
@@ -67,13 +74,21 @@ describe('when there is initially some initialBlogs saved', () => {
         assert(contents.includes('Type wars'));
         assert.strictEqual(response.body.length, initialBlogs.length + 1)
     })
-
-    test('blog contain id property and not _id', async () => {
-        const response = await api.get('/api/blogs');
-        const firstBlog = response.body[0];
-        assert.strictEqual(firstBlog.hasOwnProperty('id'), true);
-        assert.strictEqual(firstBlog.hasOwnProperty('_id'), false);
-    })
+    test('if likes property is missing, it will default to 0', async () => {
+        const missingLikesBlog = {
+            title: 'unknown blog',
+            author: 'me',
+            url: 'https://me.com',
+        }
+        await api
+            .post('/api/blogs')
+            .send(missingLikesBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        const response = await api.get('/api/blogs')
+        const lastBlog = response.body[response.body.length - 1]
+        assert.strictEqual(lastBlog.likes, 0)
+    });
 
 })
 
