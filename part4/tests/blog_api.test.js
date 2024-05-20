@@ -31,9 +31,6 @@ beforeEach(async () => {
     }
 })
 
-
-
-
 describe('when there is initially some initialBlogs saved', () => {
     test('Blogs are returned as json', async () => {
         await api
@@ -69,6 +66,13 @@ describe('when there is initially some initialBlogs saved', () => {
         const contents = response.body.map(e => e.title)
         assert(contents.includes('Type wars'));
         assert.strictEqual(response.body.length, initialBlogs.length + 1)
+    })
+
+    test('blog contain id property and not _id', async () => {
+        const response = await api.get('/api/blogs');
+        const firstBlog = response.body[0];
+        assert.strictEqual(firstBlog.hasOwnProperty('id'), true);
+        assert.strictEqual(firstBlog.hasOwnProperty('_id'), false);
     })
 
 })
