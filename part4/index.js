@@ -1,4 +1,4 @@
-const {PORT, MONGODB_URI} = require("./utils/config");
+const {PORT} = require("./utils/config");
 const {info} = require("./utils/logger");
 const app = require("./app");
 
