@@ -1,9 +1,10 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
-const BLOGS = require("./resources/blogs");
+const helper = require('./test_helper')
 
-const blogs = BLOGS;
+
+const blogs = helper.BLOGS;
 
 const listWithOneBlog = [
     {
