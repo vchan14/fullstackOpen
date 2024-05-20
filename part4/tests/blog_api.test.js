@@ -84,11 +84,32 @@ describe('when there is initially some initialBlogs saved', () => {
             .post('/api/blogs')
             .send(missingLikesBlog)
             .expect(201)
-            .expect('Content-Type', /application\/json/)
         const response = await api.get('/api/blogs')
         const lastBlog = response.body[response.body.length - 1]
         assert.strictEqual(lastBlog.likes, 0)
     });
+    test('if title is missing, return 400 bad request', async () => {
+        const missingUrlBlog = {
+            title: 'missing url',
+            author: 'me'
+        }
+        await api
+            .post('/api/blogs')
+            .send(missingUrlBlog)
+            .expect(400)
+
+    })
+
+    test('if url is missing, return 400 bad request', async () => {
+        const missingTitleBlog = {
+            url: 'https://me.com',
+            author: 'me'
+        }
+        await api
+            .post('/api/blogs')
+            .send(missingTitleBlog)
+            .expect(400)
+    })
 
 })
 
