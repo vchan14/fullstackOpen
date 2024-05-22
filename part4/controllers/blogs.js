@@ -1,5 +1,5 @@
 const blogsRouter = require('express').Router()
-const Blog = require("../models/blog");
+const Blogs = require("../models/blog");
 
 
 /******************************************************
@@ -7,12 +7,12 @@ const Blog = require("../models/blog");
  * *****************************************************
  */
 blogsRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({});
+    const blogs = await Blogs.find({});
     response.json(blogs);
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-    const blog = await Blog.findById(request.params.id)
+    const blog = await Blogs.findById(request.params.id)
     if (blog) {
         response.json(blog)
     } else {
@@ -35,7 +35,7 @@ blogsRouter.post('/', async (request, response) => {
         return response.status(400).json({error: 'title or url missing'})
     }
 
-    const blog = new Blog({
+    const blog = new Blogs({
         title: title,
         author: author,
         url: url,
@@ -53,7 +53,7 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
     const body = request.body;
-    const currentBlog = await Blog.findById(request.params.id);
+    const currentBlog = await Blogs.findById(request.params.id);
     const {title, author, url, likes} = body;
     // if the field is not provided, use the current value
     const blog = {
@@ -62,7 +62,7 @@ blogsRouter.put('/:id', async (request, response) => {
         url: url || currentBlog.url,
         likes: likes || currentBlog.likes
     }
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {new: true})
+    const updatedBlog = await Blogs.findByIdAndUpdate(request.params.id, blog, {new: true})
     response.json(updatedBlog);
 })
 
@@ -71,7 +71,7 @@ blogsRouter.put('/:id', async (request, response) => {
  * *****************************************************
  */
 blogsRouter.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndDelete(request.params.id)
+    await Blogs.findByIdAndDelete(request.params.id)
     response.status(204).end()
 
 })
