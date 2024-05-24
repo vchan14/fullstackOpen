@@ -129,10 +129,6 @@ describe('a blog can be updated', () => {
 
 })
 
-
-
-
-
 after(async () => {
     await mongoose.connection.close()
 })
