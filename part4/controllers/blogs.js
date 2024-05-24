@@ -3,15 +3,6 @@ const Blogs = require("../models/blog");
 const User = require("../models/user");
 const {verify} = require("jsonwebtoken");
 
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-        return authorization.replace('Bearer ', '')
-    }
-    return null
-}
-
-
 /******************************************************
  * GET APIs
  * *****************************************************
@@ -40,7 +31,7 @@ blogsRouter.post('/', async (request, response, next) => {
     const body = request.body;
     let decodedToken;
     try {
-        decodedToken = verify(getTokenFrom(request), process.env.SECRET)
+        decodedToken = verify(request.token, process.env.SECRET)
     } catch (e) {
         return next(e)
     }
