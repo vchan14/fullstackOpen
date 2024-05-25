@@ -1,4 +1,8 @@
 const logger = require('./logger')
+const {verify} = require("jsonwebtoken");
+const User = require("../models/user");
+const {tryCatch} = require("./trycatch");
+const {next} = require("lodash/seq");
 
 const requestLogger = (request, response, next) => {
     logger.info('Method:', request.method)
@@ -14,7 +18,6 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
     logger.error(error.message)
-
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
     } else if (error.name === 'ValidationError') {
@@ -25,7 +28,7 @@ const errorHandler = (error, request, response, next) => {
         return response.status(401).json({error: 'token invalid'})
     }
 
-    next(error)
+    return response.status(400).json({error: error.message});
 }
 
 const tokenExtractor = (request, response, next) => {
@@ -38,9 +41,29 @@ const tokenExtractor = (request, response, next) => {
     next()
 }
 
+const userExtractor = async (request, response, next) => {
+    let decodedToken;
+    try {
+        decodedToken = verify(request.token, process.env.SECRET);
+    } catch (e) {
+        return next(e)
+    }
+    if (!decodedToken.id) {
+        return response.status(401).json({error: 'token invalid'})
+    }
+    const user = await User.findById(decodedToken.id)
+    if (!user) {
+        return response.status(401).json({error: 'invalid token'});
+    }
+    // code that extracts the user
+    request.user = user;
+    next();
+};
+
 module.exports = {
     requestLogger,
     unknownEndpoint,
     errorHandler,
-    tokenExtractor
+    tokenExtractor,
+    userExtractor
 }

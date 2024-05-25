@@ -66,9 +66,17 @@ const initialBlogs =
     ]
 
 
+const messiUser = {
+    username: 'messi',
+    password: 'messi',
+    name: 'Lionel Messi'
+}
+
+
 
 
 module.exports = {
     BLOGS: Test_helper,
-    initialBlogs
+    initialBlogs,
+    messiUser
 };

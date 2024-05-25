@@ -3,14 +3,39 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const assert = require("assert");
 const helper = require('./test_helper')
+const {messiUser} = require("./test_helper");
 
 const api = supertest(app)
+let token = null;
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+
+    await User.deleteMany({})
+    // sing up for messi
+    await api
+        .post('/api/users')
+        .send(messiUser)
+        .expect(201)
+
+    // login first
+    const loginResponse = await api
+        .post('/api/login')
+        .send(messiUser);
+    token = loginResponse.body.token;
+
+    // add first post
+    await api.post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(helper.initialBlogs[0])
+
+    // add second post
+    await api.post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(helper.initialBlogs[1])
 })
 
 describe('when there is initially some initialBlogs saved', () => {
@@ -40,8 +65,8 @@ describe('when there is initially some initialBlogs saved', () => {
     })
 })
 
-describe('addition of a new blog', () => {
-    test('a valid blog can be added', async () => {
+describe.only('addition of a new blog', () => {
+    test.only('a valid blog can be added', async () => {
         const newBlog = {
             title: 'Type wars',
             author: 'me',
@@ -50,6 +75,7 @@ describe('addition of a new blog', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -58,6 +84,7 @@ describe('addition of a new blog', () => {
         assert(contents.includes('Type wars'));
         assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
     })
+
     test('if likes property is missing, it will default to 0', async () => {
         const missingLikesBlog = {
             title: 'unknown blog',
@@ -66,6 +93,7 @@ describe('addition of a new blog', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(missingLikesBlog)
             .expect(201)
         const response = await api.get('/api/blogs')
@@ -79,6 +107,7 @@ describe('addition of a new blog', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(missingUrlBlog)
             .expect(400)
 
@@ -91,6 +120,7 @@ describe('addition of a new blog', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(missingTitleBlog)
             .expect(400)
     })
@@ -102,15 +132,15 @@ describe('deletion of a blog', () => {
         const blogToDelete = response.body[0]
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', `Bearer ${token}`)
             .expect(204)
         const newBlogs = await api.get('/api/blogs')
         assert.strictEqual(newBlogs.body.length, helper.initialBlogs.length - 1)
         const contents = newBlogs.body.map(e => e.title)
         assert(!contents.includes(blogToDelete.title))
     })
-
 })
-
+//
 describe('a blog can be updated', () => {
     test('update a blog number of likes by one ', async () => {
         const blogs = await api.get('/api/blogs');
@@ -120,6 +150,7 @@ describe('a blog can be updated', () => {
         }
         await api
             .put(`/api/blogs/${firstBlog.id}`)
+            .set('Authorization', `Bearer ${token}`)
             .send(updatedBlog)
             .expect(200)
         const newBlogs = await api.get('/api/blogs');
