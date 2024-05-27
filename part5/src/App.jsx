@@ -4,6 +4,7 @@ import blogService from './services/blogService.js'
 import LoginForm from "./components/LoginForm.jsx";
 import loginService from "./services/loginService.js";
 import BlogForm from "./components/BlogForm.jsx";
+import Notification from "./components/notification/Notification.jsx";
 
 const BLOG_USER = 'BLOG_USER';
 
@@ -11,21 +12,29 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
 
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
 
-  const fetchBlogs = async () => {
-    const blogs = await blogService.getAll();
-    setBlogs(blogs);
+  const [messageObj, setMessageObj] = useState({message:'', isError: false});
+
+  const timeoutMessage = () => {
+    setTimeout(() => {
+      setMessageObj({
+        message: '',
+        isError: false
+      })
+    }, 5000)
   }
 
-  useEffect(async () => {
-    await fetchBlogs();
-  }, [])
+  const fetchBlogs = async () => {
+    if (!user) return;
+    const token = user.token;
+    const blogs = await blogService.getAll(token);
+    setBlogs(blogs);
+  }
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem(BLOG_USER)
@@ -35,20 +44,24 @@ const App = () => {
     }
   }, [])
 
+  useEffect( () => {
+    fetchBlogs()
+  }, [user])
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem(BLOG_USER, JSON.stringify(user))
-      console.log('user', user)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      setMessageObj({
+            message: 'Wrong credentials',
+            isError: true
+        })
+        timeoutMessage()
     }
   }
 
@@ -67,13 +80,25 @@ const App = () => {
     }
     const user = window.localStorage.getItem(BLOG_USER);
     const token = JSON.parse(user).token;
-    await blogService.addBlog(blogObject, token);
-    await fetchBlogs();
+    try {
+      await blogService.addBlog(blogObject, token);
+      await fetchBlogs();
+      setMessageObj({
+        message: `A new blog ${title} by ${author} added`,
+        isError: false
+      })
+    } catch (e) {
+      setMessageObj({
+        message: 'Failed to add blog',
+        isError: true
+      })
+    }
+    timeoutMessage()
   }
 
   return (
     <div>
-      {errorMessage !== null && (<h2>{errorMessage}</h2>)}
+      <Notification messageObj={messageObj}/>
       <h2>blogs</h2>
       {user === null ? (
           <LoginForm {...{handleLogin, setUsername, setPassword, username, password }}/>
