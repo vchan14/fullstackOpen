@@ -78,6 +78,7 @@ const App = () => {
         message: `A new blog ${blogObject.title} by ${blogObject.author} added`,
         isError: false
       })
+      blogFormRef.current.toggleVisibility()
     } catch (e) {
       setMessageObj({
         message: 'Failed to add blog',
@@ -99,10 +100,10 @@ const App = () => {
           <div>
             <button onClick={handleLogout}>Logout</button>
             <h3>Create New One</h3>
-            <Togglable buttonLabel='new blog' ref={blogFormRef}>
+            <Togglable buttonLabel='new blog' cancelLabel="cancel" ref={blogFormRef}>
               <BlogForm {...{handleAddForm}} />
             </Togglable>
-            {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+            {blogs.map(blog => <Blog key={blog.id} blog={blog} name={user?.name} />)}
           </div>
       )}
     </div>
