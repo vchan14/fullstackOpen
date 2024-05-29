@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-const Blog = ({blog, name, handleIncreaseLikes}) => {
+const Blog = ({blog, name, handleIncreaseLikes, handleDeleteBlog}) => {
     const [isShown, setIsShown] = useState(false);
 
     const blogStyle = {
@@ -15,6 +15,11 @@ const Blog = ({blog, name, handleIncreaseLikes}) => {
     const increaseLike = (event) => {
         event.preventDefault();
         handleIncreaseLikes(blog);
+    }
+
+    const deleteblog = (event) => {
+        event.preventDefault();
+        handleDeleteBlog(blog);
     }
 
 
@@ -33,6 +38,10 @@ const Blog = ({blog, name, handleIncreaseLikes}) => {
                 </button>
                 <br/>
                 {name}
+                <br/>
+                <button onClick={deleteblog}>
+                    remove
+                </button>
             </div>)}
         </div>
     )

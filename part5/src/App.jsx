@@ -105,6 +105,23 @@ const App = () => {
     timeoutMessage()
   }
 
+  const handleDeleteBlog = async (blog) => {
+    const isAccepted = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
+    if (!isAccepted) return;
+    const user = window.localStorage.getItem(BLOG_USER);
+    const token = JSON.parse(user).token;
+    try {
+      await blogService.deleteBlog(blog.id, token);
+      await fetchBlogs();
+    } catch (e) {
+      setMessageObj({
+        message: 'Failed to delete blog',
+        isError: true
+      })
+    }
+    timeoutMessage()
+  }
+
   const blogFormRef = useRef()
 
   return (
@@ -125,6 +142,7 @@ const App = () => {
                       blog={blog}
                       name={user?.name}
                       handleIncreaseLikes={handleIncreaseLikes}
+                      handleDeleteBlog={handleDeleteBlog}
             />)}
           </div>
       )}
