@@ -88,6 +88,22 @@ const App = () => {
     timeoutMessage()
   }
 
+  const handleIncreaseLikes = async (blog) => {
+    blog.likes += 1;
+    const user = window.localStorage.getItem(BLOG_USER);
+    const token = JSON.parse(user).token;
+    try {
+      await blogService.updateBlog(blog, token);
+      await fetchBlogs();
+    } catch (e) {
+      setMessageObj({
+        message: 'Failed to update blog',
+        isError: true
+      })
+    }
+    timeoutMessage()
+  }
+
   const blogFormRef = useRef()
 
   return (
@@ -103,7 +119,12 @@ const App = () => {
             <Togglable buttonLabel='new blog' cancelLabel="cancel" ref={blogFormRef}>
               <BlogForm {...{handleAddForm}} />
             </Togglable>
-            {blogs.map(blog => <Blog key={blog.id} blog={blog} name={user?.name} />)}
+            {blogs.map(blog =>
+                <Blog key={blog.id}
+                      blog={blog}
+                      name={user?.name}
+                      handleIncreaseLikes={handleIncreaseLikes}
+            />)}
           </div>
       )}
     </div>
