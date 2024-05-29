@@ -30,6 +30,7 @@ const App = () => {
     if (!user) return;
     const token = user.token;
     const blogs = await blogService.getAll(token);
+    blogs.sort((a, b) => b.likes - a.likes);
     setBlogs(blogs);
   }
 
