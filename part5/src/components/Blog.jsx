@@ -25,8 +25,8 @@ const Blog = ({ blog, name, handleIncreaseLikes, handleDeleteBlog }) => {
 
   return (
     <div style={blogStyle}>
-      <div>
-        {blog.title} ---- {blog.author}
+      <div className='titleAndAuthor'>
+        {blog.title} - {blog.author}
         <button onClick={() => setIsShown(!isShown)}>{isShown ? 'hide' : 'show'}</button>
       </div>
       {isShown &&(<div>
