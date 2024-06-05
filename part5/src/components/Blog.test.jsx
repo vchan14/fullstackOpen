@@ -66,7 +66,7 @@ test('Show URL and likes when show button is clicked', async () => {
  * the event handler the component received as props is called twice.
  */
 
-test.only('Like button is clicked twice', async () => {
+test('Like button is clicked twice', async () => {
 
   const blog = {
     title: 'Component testing is done with react-testing-library',
@@ -89,6 +89,7 @@ test.only('Like button is clicked twice', async () => {
 
   expect(handleIncreaseLikes).toHaveBeenCalledTimes(2)
 })
+
 
 
 
