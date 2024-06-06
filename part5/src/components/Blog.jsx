@@ -2,7 +2,6 @@ import { useState } from 'react'
 
 const Blog = ({ blog, name, handleIncreaseLikes, handleDeleteBlog }) => {
   const [isShown, setIsShown] = useState(false)
-
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -37,11 +36,15 @@ const Blog = ({ blog, name, handleIncreaseLikes, handleDeleteBlog }) => {
                     like
         </button>
         <br/>
-        {name}
+        {blog.user.name}
         <br/>
-        <button onClick={deleteblog}>
-                    remove
-        </button>
+        {
+          name === blog.user.name && (
+            <button onClick={deleteblog}>
+                remove
+            </button>
+          )
+        }
       </div>)}
     </div>
   )

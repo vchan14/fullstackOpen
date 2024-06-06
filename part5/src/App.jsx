@@ -130,6 +130,7 @@ const App = () => {
         <LoginForm {...{ handleLogin, setUsername, setPassword, username, password }}/>
       ) : (
         <div>
+          <p>Welcome <b>{user.name}</b></p>
           <button onClick={handleLogout}>Logout</button>
           <h3>Create New One</h3>
           <Togglable buttonLabel='new blog' cancelLabel="cancel" ref={blogFormRef}>

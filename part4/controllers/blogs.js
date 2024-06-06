@@ -16,10 +16,10 @@ blogsRouter.get('/me', tryCatch(async (request, response) => {
  * GET APIs
  * *****************************************************
  */
-// blogsRouter.get('/', tryCatch(async (request, response) => {
-//     const blogs = await Blogs.find({}).populate('user', {username: 1, name: 1})
-//     response.json(blogs);
-// }))
+blogsRouter.get('/', tryCatch(async (request, response) => {
+    const blogs = await Blogs.find({}).populate('user', {username: 1, name: 1})
+    response.json(blogs);
+}))
 
 blogsRouter.get('/:id', tryCatch(async (request, response) => {
     const blog = await Blogs.findById(request.params.id)
@@ -31,12 +31,12 @@ blogsRouter.get('/:id', tryCatch(async (request, response) => {
 }))
 
 // get blogs by user
-blogsRouter.get('/', middleware.userExtractor, tryCatch(async (request, response) => {
-    console.log('request.user', request.user);
-    const user = request.user;
-    const blogs = await Blogs.find({user: user._id});
-    response.json(blogs);
-}))
+// blogsRouter.get('/', middleware.userExtractor, tryCatch(async (request, response) => {
+//     console.log('request.user', request.user);
+//     const user = request.user;
+//     const blogs = await Blogs.find({user: user._id});
+//     response.json(blogs);
+// }))
 
 /********************************************************
  * Post APIs
