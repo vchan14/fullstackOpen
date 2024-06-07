@@ -1,0 +1,16 @@
+{
+  "name": "part5playwright",
+  "version": "1.0.0",
+  "description": "e2e testing module for part 5",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "author": "visalbotr chan",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.44.1",
+    "@types/node": "^20.14.2"
+  }
+}
