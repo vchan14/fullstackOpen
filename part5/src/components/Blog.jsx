@@ -23,7 +23,7 @@ const Blog = ({ blog, name, handleIncreaseLikes, handleDeleteBlog }) => {
 
 
   return (
-    <div style={blogStyle}>
+    <div className='blog-element' style={blogStyle}>
       <div className='titleAndAuthor'>
         {blog.title} - {blog.author}
         <button onClick={() => setIsShown(!isShown)}>{isShown ? 'hide' : 'show'}</button>

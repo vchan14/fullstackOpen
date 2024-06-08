@@ -111,6 +111,10 @@ const App = () => {
     try {
       await blogService.deleteBlog(blog.id, token)
       await fetchBlogs()
+      setMessageObj({
+        message: `Blog ${blog.title} by ${blog.author} deleted`,
+        isError: false
+      })
     } catch (e) {
       setMessageObj({
         message: 'Failed to delete blog',
@@ -136,13 +140,16 @@ const App = () => {
           <Togglable buttonLabel='new blog' cancelLabel="cancel" ref={blogFormRef}>
             <BlogForm {...{ handleAddForm }} />
           </Togglable>
-          {blogs.map(blog =>
-            <Blog key={blog.id}
-              blog={blog}
-              name={user?.name}
-              handleIncreaseLikes={handleIncreaseLikes}
-              handleDeleteBlog={handleDeleteBlog}
-            />)}
+          <div className="blog-list">
+            {blogs.map(blog =>
+              <Blog key={blog.id}
+                blog={blog}
+                name={user?.name}
+                handleIncreaseLikes={handleIncreaseLikes}
+                handleDeleteBlog={handleDeleteBlog}
+              />)}
+          </div>
+
         </div>
       )}
     </div>

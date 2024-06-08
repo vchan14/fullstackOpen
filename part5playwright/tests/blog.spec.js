@@ -61,7 +61,7 @@ describe('When logged in', () => {
         await expect(page.locator('#root')).toContainText('test title - test authorshow');
     })
 
-    test.only('user can like a blog', async ({ page }) => {
+    test('user can like a blog', async ({ page }) => {
         await createBlog(page, 'test title', 'test author', 'test.com');
         await page.getByRole('button', { name: 'show' }).click();
         await page.getByRole('button', { name: 'like' }).click();
@@ -69,5 +69,24 @@ describe('When logged in', () => {
         // like again
         await page.getByRole('button', { name: 'like' }).click();
         await expect(page.getByText('test.com2likeMatti')).toBeVisible();
+    })
+
+    test.only('user can delete their blog', async ({ page }) => {
+        page.on('dialog', async dialog => {
+            await dialog.accept();
+        });
+        await createBlog(page, 'test title 1', 'test author 1', 'test1.com');
+        await createBlog(page, 'test title 2', 'test author 2', 'test2.com');
+
+        await expect(page.getByText('test title 1 - test author')).toBeVisible()
+        await expect(page.getByText('test title 2 - test author')).toBeVisible()
+
+        const otherBlog = await page.getByText('test title 2 - test author')
+        await otherBlog.getByRole('button', { name: 'show' }).click();
+        await page.pause();
+
+        await page.getByRole('button', { name: 'remove' }).click();
+        await expect(otherBlog.getByText('test title 2 - test author')).not.toBeVisible()
+
     })
 })
