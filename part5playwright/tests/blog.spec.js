@@ -1,9 +1,9 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const {loginWith} = require("./helper");
+const {loginWith, createBlog} = require("./helper");
 
 describe('Blog home page ', () => {
     beforeEach(async ({ page }) => {
-        await page.goto('http://localhost:5173')
+        await page.goto('')
     })
 
     test('Login form is shown', async ({ page }) => {
@@ -16,10 +16,17 @@ describe('Blog home page ', () => {
 
 })
 
-
 describe('Login and logout ', () => {
-    beforeEach(async ({ page }) => {
-        await page.goto('http://localhost:5173')
+    beforeEach(async ({ page, request }) => {
+        await request.post('/api/testing/reset')
+        await request.post('/api/users', {
+            data: {
+                name: 'Matti Luukkainen',
+                username: 'test',
+                password: 'test'
+            }
+        })
+        await page.goto('')
     })
 
 
@@ -36,17 +43,31 @@ describe('Login and logout ', () => {
 })
 
 describe('When logged in', () => {
-    beforeEach(async ({ page }) => {
-        await page.goto('http://localhost:5173')
+    beforeEach(async ({ page, request }) => {
+        await request.post('/api/testing/reset')
+        await request.post('/api/users', {
+            data: {
+                name: 'Matti Luukkainen',
+                username: 'test',
+                password: 'test'
+            }
+        })
+        await page.goto('')
         await loginWith(page, 'test', 'test');
     })
 
-    test.only('a new blog can be created', async ({ page }) => {
-        await page.getByRole('button', { name: 'new blog' }).click();
-        await page.getByPlaceholder('enter title').fill('test title');
-        await page.getByPlaceholder('enter author').fill('test author');
-        await page.getByPlaceholder('enter url').fill('test.com');
-        await page.getByRole('button', { name: 'create' }).click();
+    test('a new blog can be created', async ({ page }) => {
+        await createBlog(page, 'test title', 'test author', 'test.com');
         await expect(page.locator('#root')).toContainText('test title - test authorshow');
+    })
+
+    test.only('user can like a blog', async ({ page }) => {
+        await createBlog(page, 'test title', 'test author', 'test.com');
+        await page.getByRole('button', { name: 'show' }).click();
+        await page.getByRole('button', { name: 'like' }).click();
+        await expect(page.getByText('test.com1likeMatti')).toBeVisible();
+        // like again
+        await page.getByRole('button', { name: 'like' }).click();
+        await expect(page.getByText('test.com2likeMatti')).toBeVisible();
     })
 })
