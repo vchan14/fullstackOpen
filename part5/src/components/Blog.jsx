@@ -31,7 +31,9 @@ const Blog = ({ blog, name, handleIncreaseLikes, handleDeleteBlog }) => {
       {isShown &&(<div>
         {blog.url}
         <br/>
-        {blog.likes}
+        <span className='like-element'>
+          {blog.likes}
+        </span>
         <button onClick={increaseLike}>
                     like
         </button>

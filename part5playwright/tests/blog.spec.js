@@ -61,7 +61,6 @@ describe('When logged in', () => {
         })
         await page.goto('')
         await loginWith(page, 'test', 'test');
-        await createBlog(page, 'test title', 'test author', 'test.com');
     })
 
     test('a new blog can be created', async ({ page }) => {
@@ -98,9 +97,9 @@ describe('When logged in', () => {
 
     })
 
-    test.only('blogs are ordered by likes', async ({ page }) => {
+    test('blogs are ordered by likes', async ({ page }) => {
         // log out
-
+        await createBlog(page, 'test title', 'test author', 'test.com');
         await page.getByRole('button', { name: 'logout' }).click();
         await loginWith(page, 'qa_user', 'qa_user');
         await createBlog(page, 'qa title', 'qa author', 'qa.com');
@@ -125,5 +124,56 @@ describe('When logged in', () => {
 
     })
 
+    test('More like blogs are shown first', async ({ page }) => {
+        await createBlog(page, 'test title 1', 'test author 1', 'test1.com');
+        await createBlog(page, 'test title 2', 'test author 2', 'test2.com');
+        await createBlog(page, 'test title 3', 'test author 3', 'test3.com');
+
+        const firstBlog = await page.getByText('test title 1 - test author 1show');
+        await firstBlog.getByRole('button', {name: 'show'}).click();
+
+        const secondBlog = await page.getByText('test title 2 - test author 2show');
+        await secondBlog.getByRole('button', {name: 'show'}).click();
+
+
+        const thirdBlog = await page.getByText('test title 3 - test author 3show');
+        await thirdBlog.getByRole('button', {name: 'show'}).click();
+
+
+
+        await page.pause();
+        const allBlogs = await page.locator('.blog-element');
+        const firstBlogDetails = allBlogs.nth(0)
+        const secondBlogDetails = allBlogs.nth(1)
+        const thirdBlogDetails = allBlogs.nth(2)
+
+        for(const i of [1]) {
+            await firstBlogDetails.getByRole('button', {name: 'like'}).click();
+        }
+
+        for(const i of [1, 2]) {
+            await secondBlogDetails.getByRole('button', {name: 'like'}).click();
+        }
+
+        for(const i of [1, 2, 3]) {
+            await thirdBlogDetails.getByRole('button', {name: 'like'}).click();
+        }
+
+        await page.waitForTimeout(500); // waits for 500 milliseconds
+
+        const likeElements = await page.locator('.like-element');
+
+        const likeArr = [];
+        for (let i =0; i< 3; i++) {
+            const like = await likeElements.nth(i)
+            const likeNumber = await like.textContent();
+            console.log('i', i);
+            console.log('like', likeNumber);
+            likeArr.push(likeNumber);
+        }
+
+        expect(JSON.stringify(likeArr)).toEqual(JSON.stringify(['3', '2', '1']));
+        await expect(allBlogs).toHaveCount(3);
+    })
 
 })
