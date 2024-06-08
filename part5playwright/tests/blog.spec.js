@@ -34,3 +34,19 @@ describe('Login and logout ', () => {
         await expect(page.getByText('wrong credentials')).toBeVisible();
     })
 })
+
+describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+        await page.goto('http://localhost:5173')
+        await loginWith(page, 'test', 'test');
+    })
+
+    test.only('a new blog can be created', async ({ page }) => {
+        await page.getByRole('button', { name: 'new blog' }).click();
+        await page.getByPlaceholder('enter title').fill('test title');
+        await page.getByPlaceholder('enter author').fill('test author');
+        await page.getByPlaceholder('enter url').fill('test.com');
+        await page.getByRole('button', { name: 'create' }).click();
+        await expect(page.locator('#root')).toContainText('test title - test authorshow');
+    })
+})

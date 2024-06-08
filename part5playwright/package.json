@@ -4,9 +4,10 @@
   "description": "e2e testing module for part 5",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test",
+    "test:all": "playwright test",
     "test:report": "playwright show-report",
-    "test:gen": "npx playwright codegen http://localhost:5173/"
+    "test:gen": "npx playwright codegen http://localhost:5173/",
+    "test": "npx playwright test --project='chromium'"
   },
   "author": "visalbotr chan",
   "license": "ISC",
