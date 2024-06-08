@@ -8,7 +8,7 @@
     "test:report": "playwright show-report",
     "test:gen": "npx playwright codegen http://localhost:5173/",
     "test": "npx playwright test --project='chromium'",
-    "test:debug": "npx playwright test --project='chromium' --debug"
+    "debug": "npx playwright test --project='chromium' --debug"
   },
   "author": "visalbotr chan",
   "license": "ISC",

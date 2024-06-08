@@ -47,6 +47,13 @@ describe('When logged in', () => {
         await request.post('/api/testing/reset')
         await request.post('/api/users', {
             data: {
+                name: 'qa_user',
+                username: 'qa_user',
+                password: 'qa_user'
+            }
+        })
+        await request.post('/api/users', {
+            data: {
                 name: 'Matti Luukkainen',
                 username: 'test',
                 password: 'test'
@@ -54,6 +61,7 @@ describe('When logged in', () => {
         })
         await page.goto('')
         await loginWith(page, 'test', 'test');
+        await createBlog(page, 'test title', 'test author', 'test.com');
     })
 
     test('a new blog can be created', async ({ page }) => {
@@ -71,7 +79,7 @@ describe('When logged in', () => {
         await expect(page.getByText('test.com2likeMatti')).toBeVisible();
     })
 
-    test.only('user can delete their blog', async ({ page }) => {
+    test('user can delete their blog', async ({ page }) => {
         page.on('dialog', async dialog => {
             await dialog.accept();
         });
@@ -89,4 +97,33 @@ describe('When logged in', () => {
         await expect(otherBlog.getByText('test title 2 - test author')).not.toBeVisible()
 
     })
+
+    test.only('blogs are ordered by likes', async ({ page }) => {
+        // log out
+
+        await page.getByRole('button', { name: 'logout' }).click();
+        await loginWith(page, 'qa_user', 'qa_user');
+        await createBlog(page, 'qa title', 'qa author', 'qa.com');
+
+        await page.pause();
+        await expect(page.getByText('test title - test author')).toBeVisible();
+        await expect(page.getByText('qa title - qa author')).toBeVisible();
+
+        const firstBlog = await page.getByText('test title - test authorshow');
+        await firstBlog.getByRole('button', {name: 'show'}).click();
+
+        const secondBlog = await page.getByText('qa title - qa authorshow')
+        await secondBlog.getByRole('button', {name: 'show'}).click();
+
+        const firstBlogDetails = await page.getByText('test title - test authorhidetest.com0likeMatti Luukkainen');
+
+        await page.pause();
+        await expect(firstBlogDetails.getByRole('button', {name: 'remove'})).not.toBeVisible();
+
+        const secondBlogDetails = await page.getByText('qa title - qa authorhideqa.');
+        await expect(secondBlogDetails.getByRole('button', {name: 'remove'})).toBeVisible();
+
+    })
+
+
 })
