@@ -135,11 +135,8 @@ describe('When logged in', () => {
         const secondBlog = await page.getByText('test title 2 - test author 2show');
         await secondBlog.getByRole('button', {name: 'show'}).click();
 
-
         const thirdBlog = await page.getByText('test title 3 - test author 3show');
         await thirdBlog.getByRole('button', {name: 'show'}).click();
-
-
 
         await page.pause();
         const allBlogs = await page.locator('.blog-element');
