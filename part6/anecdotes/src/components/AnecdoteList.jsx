@@ -2,7 +2,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {incrementVote} from "../reducers/anecdoteReducer.js";
 
 const AnecdoteList = () => {
-    const sortedAnecdotes = useSelector(state => state.sort((a, b) => b.votes - a.votes));
+    const sortedAnecdotes = useSelector(state =>
+        state.anecdotes
+            .sort((a, b) => b.votes - a.votes)
+            .filter(anecdote => anecdote.content.includes(state.filter))
+    );
     const dispatch = useDispatch()
 
     const vote = (id) => {
