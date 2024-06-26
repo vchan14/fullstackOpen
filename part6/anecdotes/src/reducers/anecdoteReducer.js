@@ -70,6 +70,13 @@ export const createAnecdoteDb = (content) => {
     }
 }
 
+export const incrementVoteDb = (id) => {
+    return async dispatch => {
+        const updatedAnecdote = await anecdoteService.incrementVote(id);
+        dispatch(incrementVote(updatedAnecdote.id));
+    }
+}
+
 
 export const {incrementVote, createAnecdote, appendAnecdote, setAnecdote} = anecdotesSlice.actions;
 export default anecdotesSlice.reducer;
