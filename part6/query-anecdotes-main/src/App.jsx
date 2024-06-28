@@ -1,19 +1,26 @@
 import AnecdoteForm from './components/AnecdoteForm.jsx'
 import Notification from './components/Notification.jsx'
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const App = () => {
+
+  const result = useQuery({
+    queryKey: ['anecdotes'],
+    queryFn: () => axios.get('http://localhost:3001/anecdotes').then(res => res.data),
+    retry: 1
+  })
+  // detect if there are problems communicating with the server
+  if (result.isError) {
+    return <div>anecdote service not available due to problems in server</div>
+  }
+
+
+  const anecdotes = result.data || [];
 
   const handleVote = (anecdote) => {
     console.log('vote')
   }
-
-  const anecdotes = [
-    {
-      "content": "If it hurts, do it more often",
-      "id": "47145",
-      "votes": 0
-    },
-  ]
 
   return (
     <div>
