@@ -64,8 +64,6 @@ export const initializeAnecdotes = () => {
 export const createAnecdoteDb = (content) => {
     return async dispatch => {
         const newAnecdote = await anecdoteService.createNew(content);
-
-        console.log()
         dispatch(createAnecdote(newAnecdote));
     }
 }

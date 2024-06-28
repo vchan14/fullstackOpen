@@ -6,6 +6,9 @@ import {useDispatch} from "react-redux";
 import {useEffect} from "react";
 import {initializeAnecdotes} from "./reducers/anecdoteReducer.js";
 
+
+
+
 const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
