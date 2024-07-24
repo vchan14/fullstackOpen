@@ -92,10 +92,17 @@ const CreateNew = (props) => {
     setTimeout(() => props.setNotification(''), 5000);
   }
 
+  const handleClear = (e) => {
+    e.preventDefault();
+    content.clearField();
+    author.clearField();
+    info.clearField();
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div>
           content
           <input name='content' value={content.value} onChange={content.onChange} />
@@ -108,7 +115,8 @@ const CreateNew = (props) => {
           url for more info
           <input name='info' value={info.value} onChange={info.onChange} />
         </div>
-        <button>create</button>
+        <button onClick={handleSubmit}>create</button>
+        <button onClick={handleClear}>clear</button>
       </form>
     </div>
   )
