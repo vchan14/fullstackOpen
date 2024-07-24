@@ -77,6 +77,19 @@ const CreateNew = (props) => {
   const author = useField('text');
   const info = useField('text');
 
+  // For the content input
+  const { clearField: clearContentField, ...contentProps } = content;
+// Use contentProps to spread into the input
+
+// For the author input
+  const { clearField: clearAuthorField, ...authorProps } = author;
+// Use authorProps to spread into the input
+
+// For the info input
+  const { clearField: clearInfoField, ...infoProps } = info;
+// Use infoProps to spread into the input
+
+
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -105,15 +118,15 @@ const CreateNew = (props) => {
       <form>
         <div>
           content
-          <input name='content' value={content.value} onChange={content.onChange} />
+          <input {...contentProps}/>
         </div>
         <div>
           author
-          <input name='author' value={author.value} onChange={author.onChange} />
+          <input {...authorProps}/>
         </div>
         <div>
           url for more info
-          <input name='info' value={info.value} onChange={info.onChange} />
+          <input {...infoProps}/>
         </div>
         <button onClick={handleSubmit}>create</button>
         <button onClick={handleClear}>clear</button>
