@@ -6,10 +6,14 @@ import loginService from "./services/loginService.js";
 import BlogForm from "./components/BlogForm.jsx";
 import Notification from "./components/notification/Notification.jsx";
 import Togglable from "./components/Togglable.jsx";
+import { setNotification } from "./reducers/notificationReducer.js";
+import { useDispatch } from "react-redux";
 
 const BLOG_USER = "BLOG_USER";
 
 const App = () => {
+  const dispatch = useDispatch();
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -17,14 +21,6 @@ const App = () => {
 
   const [messageObj, setMessageObj] = useState({ message: "", isError: false });
 
-  const timeoutMessage = () => {
-    setTimeout(() => {
-      setMessageObj({
-        message: "",
-        isError: false,
-      });
-    }, 5000);
-  };
   const fetchBlogs = useCallback(async () => {
     if (!user) return;
     const token = user.token;
@@ -54,11 +50,15 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setMessageObj({
-        message: "Wrong credentials",
-        isError: true,
-      });
-      timeoutMessage();
+      dispatch(
+        setNotification(
+          {
+            message: "Wrong credentials ",
+            isError: true,
+          },
+          5,
+        ),
+      );
     }
   };
 
@@ -73,18 +73,17 @@ const App = () => {
     try {
       await blogService.addBlog(blogObject, token);
       await fetchBlogs();
-      setMessageObj({
-        message: `A new blog ${blogObject.title} by ${blogObject.author} added`,
-        isError: false,
-      });
+      dispatch(
+        setNotification({
+          message: `A new blog ${blogObject.title} by ${blogObject.author} added`,
+          isError: false,
+        }),
+      );
       blogFormRef.current.toggleVisibility();
     } catch (e) {
-      setMessageObj({
-        message: "Failed to add blog",
-        isError: true,
-      });
+      dispatch(setNotification("Failed to add blog"));
     }
-    timeoutMessage();
+    // timeoutMessage();
   };
 
   const handleIncreaseLikes = async (blog) => {
@@ -95,12 +94,13 @@ const App = () => {
       await blogService.updateBlog(blog, token);
       await fetchBlogs();
     } catch (e) {
-      setMessageObj({
-        message: "Failed to update blog",
-        isError: true,
-      });
+      dispatch(
+        setNotification({
+          message: "Failed to update blog",
+          isError: true,
+        }),
+      );
     }
-    timeoutMessage();
   };
 
   const handleDeleteBlog = async (blog) => {
@@ -113,24 +113,28 @@ const App = () => {
     try {
       await blogService.deleteBlog(blog.id, token);
       await fetchBlogs();
-      setMessageObj({
-        message: `Blog ${blog.title} by ${blog.author} deleted`,
-        isError: false,
-      });
+      dispatch(
+        setNotification({
+          message: `Blog ${blog.title} by ${blog.author} deleted`,
+          isError: false,
+        }),
+      );
     } catch (e) {
-      setMessageObj({
-        message: "Failed to delete blog",
-        isError: true,
-      });
+      dispatch(
+        setNotification({
+          message: "Failed to delete blog",
+          isError: true,
+        }),
+      );
     }
-    timeoutMessage();
+    // timeoutMessage();
   };
 
   const blogFormRef = useRef();
 
   return (
     <div>
-      <Notification messageObj={messageObj} />
+      <Notification />
       <h2>blogs</h2>
       {user === null ? (
         <LoginForm
