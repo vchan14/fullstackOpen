@@ -83,7 +83,6 @@ const App = () => {
     } catch (e) {
       dispatch(setNotification("Failed to add blog"));
     }
-    // timeoutMessage();
   };
 
   const handleIncreaseLikes = async (blog) => {
@@ -127,7 +126,6 @@ const App = () => {
         }),
       );
     }
-    // timeoutMessage();
   };
 
   const blogFormRef = useRef();
